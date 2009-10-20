@@ -1,0 +1,19 @@
+{% extends "site_base.html" %}
+
+{% load i18n %}
+
+{% block body_class %}company{% endblock %}
+
+
+{% block extra_head %}
+{% endblock %}
+
+{% block subnav %}
+    <ul>
+        {% if user.is_authenticated %}
+            <li><a href="{% url your_companies %} ">{% trans "Your Companies" %}</a></li>
+            <li><a href="{% url company_create %}">{% trans "Create a Company" %}</a></li>
+        {% endif %}
+        <li><a href="{% url company_list %}">{% trans "All Companies" %}</a></li>
+    </ul>
+{% endblock %}

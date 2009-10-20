@@ -1,0 +1,31 @@
+{% load i18n %}
+{% load extra_tagging_tags %}
+{% load economic_resource_tags %}
+{% load avatar_tags %}
+{% load shorttimesince_tag %}
+{% load threadedcommentstags %}
+{% load markup_tags %}
+{% load group_tags %}
+{% load theme_tags %}
+
+<div class="task clearfix">
+    <div class="task-meta">
+        
+         <div><b>{% trans "Name" %}</b>: {{ economic_resource.name }}</div>
+        <div><b>{% trans "Creator" %}</b>:{{ economic_resource.creator }}</div>
+        <div><b>{% trans "Created" %}</b>: {{ economic_resource.created|date }}</div>
+        <div><b>{% trans "Modified" %}</b>: {{ economic_resource.modified|shorttimesince }} ago</div>
+    </div>
+    <div class="bulk">
+        <h2><a href="{{ economic_resource.get_absolute_url }}">{{ economic_resource.name }}</a></h2>
+        <div class="task-meta2">
+            {% get_comment_count for economic_resource as comment_count %}
+            {% if comment_count %}
+                {{ comment_count }} comment{{ comment_count|pluralize }};
+            {% endif %}
+        </div>
+{% comment %}
+        <p>{% silk "tag_blue" %} {% economic_resource_tags economic_resource group %}</p>
+{% endcomment %}
+    </div>
+</div>

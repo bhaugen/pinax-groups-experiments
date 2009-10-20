@@ -1,0 +1,54 @@
+{% extends "economic_resources/base.html" %}
+
+{% load i18n %}
+{% load economic_resource_tags %}
+{% load comments_tag %}
+{% load uni_form %}
+{% load attachments_tags %}
+{% load group_tags %}
+{% load theme_tags %}
+
+{% block head_title %}{{ economic_resource }}{% endblock %}
+
+{% block body %}
+    
+    <p><a href="{% groupurl economic_resource_list group %}">&larr; {% trans "Back to Task List" %}</a></p>
+    
+    {% show_economic_resource economic_resource %}
+    
+    {% if is_member %}
+        <h2>{% trans "Edit" %}</h2>
+        <form method="POST" action="" id="economic_resource_form" class="uniForm">
+            {{ form.media }}
+            {{ form|as_uni_form }}
+            
+            <div class="form_block">
+                <input type="submit" value="{% trans "Update Task" %}" />
+            </div>
+            
+        </form>
+    {% endif %}
+    
+    {% get_attachments_for economic_resource as "attachments" %}
+    {% if attachments %}
+    <h2>{% trans "Attachments" %}</h2>
+    
+    <ul>
+    {% for attachment in attachments %}
+        <li>
+            {% silk "attach" %}
+            <a href="{{ attachment.attachment_file.url }}">{{ attachment.filename }}</a>
+            - <span class="lighter">{{ attachment.created|date:_("DATETIME_FORMAT") }}</span>
+            {% attachment_delete_link attachment %}
+        </li>
+    {% endfor %}
+    </ul>
+    {% endif %}
+    
+    {% attachment_form economic_resource %}
+    
+    <h2>{% trans "Comment" %}</h2>
+    {% comments economic_resource %}
+{% endblock %}
+
+

@@ -1,0 +1,22 @@
+{% extends "economic_resources/base.html" %}
+
+{% load i18n %}
+{% load shorttimesince_tag %}
+{% load order_by %}
+{% load humanize %}
+{% load economic_resource_tags %}
+{% load tagging_tags %}
+{% load group_tags %}
+
+{% block head_title %}Economic Resources{% endblock %}
+
+{% block body %}
+
+    <h1>Economic Resources for {{ group }} {{ group.type_name }}</h1>
+    
+    {% for economic_resource in economic_resources %}
+		<p>{% show_economic_resource economic_resource %}</p>
+
+	{% endfor %}
+    
+{% endblock %}

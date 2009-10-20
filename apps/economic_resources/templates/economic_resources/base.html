@@ -1,0 +1,17 @@
+{% extends group_base|default:"site_base.html" %}
+
+{% load i18n %}
+{% load group_tags %}
+
+{% block body_class %}economic_resources{% endblock %}
+
+{% block subnav %}
+    {% if user.is_authenticated %}
+        <ul>
+            <li><a href="{% groupurl economic_resource_add group %}">{% trans "Add Economic Resource" %}</a></li>
+            <li><a href="{% groupurl economic_resource_list group %}">{% trans "All Economic Resources" %}</a></li>
+        </ul>
+    {% else %}
+        &nbsp;
+    {% endif %}
+{% endblock %}

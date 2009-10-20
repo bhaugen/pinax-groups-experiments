@@ -1,0 +1,32 @@
+{% extends "economic_resources/base.html" %}
+
+{% load i18n %}
+{% load uni_form %}
+{% load group_tags %}
+
+{% block head_title %}Add Economic Resource{% endblock %}
+
+{% block body %}
+    <h1>Add Economic Resource {% if group %} for {{ group }} {{ group_type }} {% endif %}</h1>
+
+    {% if is_member %}
+
+         <div class="main-form">
+            <form method="POST" action="" id="economic_resource_form" class="uniForm">
+                <div class="form_block">
+                    {{ economic_resource_form.media }}
+                    {{ economic_resource_form|as_uni_form }}
+                    <input type="submit" value="{% trans 'Add economic resource' %}"/>
+                    <input type="submit" name="add-another-economic_resource" value="{% trans 'Add economic resource and add another' %}"/>
+                </div>
+            </form>
+        </div>
+
+
+    {% else %}
+        <p>{% trans 'You are not a member and so cannot add a economic resource.' %}</p>
+    {% endif %}
+
+{% endblock %}
+
+
