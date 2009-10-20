@@ -36,7 +36,7 @@ def focus_url(field, value, group=None):
     if group is None:
         return reverse("task_focus", kwargs=kwargs)
     else:
-        return group.content_bridge.reverse("task_focus", group, kwargs=kwargs)
+        return group.content_bridge.reverse("task_focus", group, None, kwargs=kwargs)
 
 @register.inclusion_tag("tasks/tag_list.html")
 def task_tags(obj, group=None):

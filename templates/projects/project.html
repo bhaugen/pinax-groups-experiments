@@ -12,7 +12,7 @@
 {% load wiki_tags %}
 {% load theme_tags %}
 
-{% block head_title %}{{ project.name }}{% endblock %}
+{% block head_title %}{{ project.name }} {% if project.group %} for {{ project.group }} {{ project.group.type_name }} {% endif %} {% endblock %}
 
 {% block body %}
     
@@ -37,7 +37,7 @@
     
     <div style="width: 550px;">
         
-        <h1>{% trans "Project" %} {{ project.name }}</h1>
+        <h1>{% trans "Project" %} {{ project.name }} {% if project.group %} for {{ project.group }} {{ project.group.type_name }} {% endif %} </h1>
         
         <p>
             {% trans "Slug:" %} <tt>{{ project.slug }}</tt><br />

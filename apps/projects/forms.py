@@ -8,11 +8,31 @@ from projects.models import Project, ProjectMember
 # @@@ we should have auto slugs, even if suggested and overrideable
 
 class ProjectForm(forms.ModelForm):
-    
+
     slug = forms.SlugField(max_length=20,
         help_text = _("a short version of the name consisting only of letters, numbers, underscores and hyphens."),
         error_message = _("This value must contain only letters, numbers, underscores and hyphens."))
+    
+
+    def __init__(self, user, group, *args, **kwargs):
+        self.user = user
+        self.group = group
+        
+        super(ProjectForm, self).__init__(*args, **kwargs)
             
+    #def save(self, commit=True):
+        
+    #    return super(ProjectForm, self).save(commit)       
+    
+    def clean(self):
+        self.check_group_membership()
+        return self.cleaned_data
+    
+    def check_group_membership(self):
+        group = self.group
+        if group and not self.group.user_is_member(self.user):
+            raise forms.ValidationError("You must be a member to create projects")   
+
     def clean_slug(self):
         if Project.objects.filter(slug__iexact=self.cleaned_data["slug"]).count() > 0:
             raise forms.ValidationError(_("A project already exists with that slug."))
@@ -31,6 +51,12 @@ class ProjectForm(forms.ModelForm):
 # @@@ is this the right approach, to have two forms where creation and update fields differ?
 
 class ProjectUpdateForm(forms.ModelForm):
+
+    def __init__(self, user, group, *args, **kwargs):
+        self.user = user
+        self.group = group
+        
+        super(ProjectUpdateForm, self).__init__(*args, **kwargs)
     
     def clean_name(self):
         if Project.objects.filter(name__iexact=self.cleaned_data["name"]).count() > 0:

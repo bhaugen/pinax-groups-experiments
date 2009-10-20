@@ -13,8 +13,8 @@
 
 {% block body %}
     {#<h1>{% trans "Tasks for Project" %} <a href="@@@">{{ group.name }}</a></h1> #}
-    <h1>Tasks</h1>
-    
+    <h1>Tasks for {{ group }}</h1>
+  
     <form action="" method="GET">
         <div class="task_filter">
             <ul>
@@ -163,5 +163,5 @@
         {% endifequal %}
     </table>
     <p class="expand_collapse_all"><a class="expand_all">expand all</a> &ndash; <a class="collapse_all">collapse all</a></p>
-    
+
 {% endblock %}

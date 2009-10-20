@@ -32,30 +32,95 @@ WHERE projects_projectmember.project_id = projects_project.id
 """
 
 @login_required
-def create(request, form_class=ProjectForm, template_name="projects/create.html"):
-    project_form = form_class(request.POST or None)
+def create(request, form_class=ProjectForm, template_name="projects/create.html", parent_slug=None, bridge=None):
+
+    group_type = ""
+    if bridge:
+        try:
+            group = bridge.get_group(parent_slug)
+            group_type = group._meta.verbose_name.title()
+        except ObjectDoesNotExist:
+            raise Http404
+    else:
+        group = None
+    #import pdb; pdb.set_trace()
+    if group:
+        parent_base = bridge.group_base_template()
+    else:
+        parent_base = None
+    
+    if not request.user.is_authenticated():
+        is_member = False
+    else:
+        if group:
+            is_member = group.user_is_member(request.user)
+        else:
+            is_member = True
+
+    project_form = form_class(request.user, group, request.POST or None)
     
     if project_form.is_valid():
+        #import pdb; pdb.set_trace()
         project = project_form.save(commit=False)
         project.creator = request.user
+        project.group = group
         project.save()
         project_member = ProjectMember(project=project, user=request.user)
         project.members.add(project_member)
         project_member.save()
         if notification:
-            # @@@ might be worth having a shortcut for sending to all users
-            notification.send(User.objects.all(), "projects_new_project",
+            if group:
+                notify_list = group.member_queryset()
+            else:
+                notify_list = User.objects.all() # @@@
+            notify_list = notify_list.exclude(id__exact=request.user.id)
+            notification.send(notify_list, "projects_new_project",
                 {"project": project}, queue=True)
-        return HttpResponseRedirect(project.get_absolute_url())
+        if group:
+            redirect_to = bridge.reverse("project_list", group, "projects")
+        else:
+            redirect_to = reverse("project_list")
+        return HttpResponseRedirect(redirect_to)
+        #return HttpResponseRedirect(project.get_absolute_url())
+
     
     return render_to_response(template_name, {
         "project_form": project_form,
+        "group": group,
+        "group_type": group_type,
+        "is_member": is_member,
+        "parent_base": parent_base,
     }, context_instance=RequestContext(request))
 
 
-def projects(request, template_name="projects/projects.html"):
+def projects(request, template_name="projects/projects.html", parent_slug=None, bridge=None):
+
+    group_type = ""
+    if bridge:
+        try:
+            group = bridge.get_group(parent_slug)
+            group_type = group._meta.verbose_name.title()
+        except ObjectDoesNotExist:
+            raise Http404
+    else:
+        group = None
     
-    projects = Project.objects.all()
+    if not request.user.is_authenticated():
+        is_member = False
+    else:
+        if group:
+            is_member = group.user_is_member(request.user)
+        else:
+            is_member = True
+        
+    if group:
+        projects = group.content_objects(Project)
+        parent_base = bridge.group_base_template()
+    else:
+        projects = Project.objects.filter(object_id=None)
+        parent_base = None  
+    
+    #projects = Project.objects.all()
     
     search_terms = request.GET.get('search', '')
     if search_terms:
@@ -70,13 +135,17 @@ def projects(request, template_name="projects/projects.html"):
     ]), select_params=(content_type.id,))
     
     return render_to_response(template_name, {
+        "group": group,
+        "group_type": group_type,
+        "is_member": is_member,
+        "parent_base": parent_base,
         'projects': projects,
         'search_terms': search_terms,
     }, context_instance=RequestContext(request))
 
 
-def delete(request, group_slug=None, redirect_url=None):
-    project = get_object_or_404(Project, slug=group_slug)
+def delete(request, project_slug=None, redirect_url=None):
+    project = get_object_or_404(Project, slug=project_slug)
     if not redirect_url:
         redirect_url = reverse('project_list')
     
@@ -107,9 +176,24 @@ def your_projects(request, template_name="projects/your_projects.html"):
     }, context_instance=RequestContext(request))
 
 
-def project(request, group_slug=None, form_class=ProjectUpdateForm, adduser_form_class=AddUserForm,
-        template_name="projects/project.html"):
-    project = get_object_or_404(Project, slug=group_slug)
+def project(request, project_slug=None, form_class=ProjectUpdateForm, adduser_form_class=AddUserForm,
+        template_name="projects/project.html", parent_slug=None, bridge=None):
+    project = get_object_or_404(Project, slug=project_slug)
+
+    group_type = ""
+    if bridge:
+        try:
+            group = bridge.get_group(parent_slug)
+            group_type = group._meta.verbose_name.title()
+        except ObjectDoesNotExist:
+            raise Http404
+    else:
+        group = None
+
+    if group:
+        parent_base = bridge.group_base_template()
+    else:
+        parent_base = None
     
     if not request.user.is_authenticated():
         is_member = False
@@ -118,11 +202,11 @@ def project(request, group_slug=None, form_class=ProjectUpdateForm, adduser_form
     
     action = request.POST.get("action")
     if request.user == project.creator and action == "update":
-        project_form = form_class(request.POST, instance=project)
+        project_form = form_class(request.user, group, request.POST, instance=project)
         if project_form.is_valid():
             project = project_form.save()
     else:
-        project_form = form_class(instance=project)
+        project_form = form_class(request.user, group, instance=project)
     if request.user == project.creator and action == "add":
         adduser_form = adduser_form_class(request.POST, project=project)
         if adduser_form.is_valid():
@@ -135,6 +219,8 @@ def project(request, group_slug=None, form_class=ProjectUpdateForm, adduser_form
         "project_form": project_form,
         "adduser_form": adduser_form,
         "project": project,
-        "group": project, # @@@ this should be the only context var for the project
+        "group": group, 
         "is_member": is_member,
+        "group_type": group_type,
+        "parent_base": parent_base,
     }, context_instance=RequestContext(request))

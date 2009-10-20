@@ -41,6 +41,9 @@ class Group(models.Model):
 
     def __unicode__(self):
         return self.name
+
+    def type_name(self):
+        return self._meta.verbose_name.title()
     
     def get_url_kwargs(self):
         return {'group_slug': self.slug}

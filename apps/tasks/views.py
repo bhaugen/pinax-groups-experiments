@@ -69,6 +69,9 @@ def tasks(request, group_slug=None, template_name="tasks/task_list.html", bridge
     else:
         tasks = Task.objects.filter(object_id=None)
         group_base = None
+
+    print "group:", group
+    print "group_base:", group_base
     
     tasks = tasks.select_related("assignee")
     
@@ -87,7 +90,6 @@ def tasks(request, group_slug=None, template_name="tasks/task_list.html", bridge
     group_by_querydict = request.GET.copy()
     group_by_querydict.pop("group_by", None)
     group_by_querystring = group_by_querydict.urlencode()
-    
     return render_to_response(template_name, {
         "group": group,
         "group_by": group_by,

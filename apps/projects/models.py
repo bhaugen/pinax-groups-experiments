@@ -4,17 +4,31 @@ from django.core.urlresolvers import reverse
 from django.contrib.auth.models import  User
 from django.utils.translation import ugettext_lazy as _
 from django.db import models
+from django.contrib.contenttypes.models import ContentType
+from django.contrib.contenttypes import generic
 
 from groups.base import Group
 
 class Project(Group):
     
+    content_type = models.ForeignKey(ContentType, null=True, blank=True)
+    object_id = models.PositiveIntegerField(null=True, blank=True)
+    group = generic.GenericForeignKey("content_type", "object_id")
+
     member_users = models.ManyToManyField(User, through="ProjectMember", verbose_name=_('members'))
     
     # private means only members can see the project
     private = models.BooleanField(_('private'), default=False)
+
+    def get_absolute_url(self, group=None):
+        #kwargs = {"id": self.pk, 'group_slug': self.slug}
+        if not group:
+            group = self.group
+        if group:
+            return group.content_bridge.reverse("project_detail", group, {"id": self.pk})
+        return reverse("project_detail", kwargs={'project_slug': self.slug})
     
-    def get_absolute_url(self):
+    def get_absolute_url_old(self):
         return reverse('project_detail', kwargs={'group_slug': self.slug})
     
     def member_queryset(self):

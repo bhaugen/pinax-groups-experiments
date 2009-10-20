@@ -9,16 +9,20 @@ register = template.Library()
 
 
 class GroupURLNode(template.Node):
-    def __init__(self, view_name, group, kwargs, asvar):
+    """
+    variant is for use with content apps that must use a different group.get_url_kwargs
+    e.g. {% groupurl project_list company as projects_url variant projects %}
+    """
+    def __init__(self, view_name, group, kwargs, asvar, variant):
         self.view_name = view_name
         self.group = group
         self.kwargs = kwargs
         self.asvar = asvar
+        self.variant = variant
     
     def render(self, context):
         url = ""
         group = self.group.resolve(context)
-        
         kwargs = {}
         for k, v in self.kwargs.items():
             kwargs[smart_str(k, "ascii")] = v.resolve(context)
@@ -26,7 +30,7 @@ class GroupURLNode(template.Node):
         if group:
             bridge = group.content_bridge
             try:
-                url = bridge.reverse(self.view_name, group, kwargs=kwargs)
+                url = bridge.reverse(self.view_name, group, self.variant, kwargs=kwargs)
             except NoReverseMatch:
                 if self.asvar is None:
                     raise
@@ -77,13 +81,15 @@ def groupurl(parser, token):
     args = []
     kwargs = {}
     asvar = None
-    
+    variant = None
+
     if len(bits) > 3:
         bits = iter(bits[3:])
         for bit in bits:
             if bit == "as":
                 asvar = bits.next()
-                break
+            elif bit == "variant":
+                variant = bits.next()
             else:
                 for arg in bit.split(","):
                     if "=" in arg:
@@ -93,7 +99,7 @@ def groupurl(parser, token):
                     elif arg:
                         raise template.TemplateSyntaxError("'%s' does not support non-kwargs arguments." % tag_name)
     
-    return GroupURLNode(view_name, group, kwargs, asvar)
+    return GroupURLNode(view_name, group, kwargs, asvar, variant)
 
 
 @register.tag

@@ -56,17 +56,20 @@ class ContentBridge(object):
 
         return patterns("", *final_urls)
     
-    def reverse(self, view_name, group, kwargs=None):
+    def reverse(self, view_name, group, variant, kwargs=None):
         if kwargs is None:
             kwargs = {}
         
         prefix = self.content_app_name
-        print "prefix:", prefix, "group:", group, "view_name:", view_name
+
         final_kwargs = {}
         
-        final_kwargs.update(group.get_url_kwargs())
+        if variant:
+            final_kwargs.update(group.get_url_kwargs(variant))
+        else:
+            final_kwargs.update(group.get_url_kwargs())
         final_kwargs.update(kwargs)
-        
+        #import pdb; pdb.set_trace()
         return dreverse("%s_%s" % (prefix, view_name), kwargs=final_kwargs)
     
     def render(self, template_name, context, context_instance=None):

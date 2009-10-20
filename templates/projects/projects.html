@@ -8,15 +8,16 @@
 {% load extra_tagging_tags %}
 {% load projects_tags %}
 {% load sorting_tags %}
+{% load group_tags %}
 
 {% block head_title %}{% blocktrans %}Projects{% endblocktrans %}{% endblock %}
 
 {% block body %}
-    <h1>{% trans "Projects" %}</h1>
+    <h1>{% trans "Projects" %} {% if group %} for {{ group }} {{ group.type_name }} {% endif %}</h1>
     
     <p>{% trans "A <b>project</b> is a group of people working on a common set of tasks." %}</p>
     {% if user.is_authenticated %}
-        <p><a href="{% url project_create %}">Create</a> your own project.</p>
+        <p><a href="{% groupurl project_create group variant projects  %}">Create</a> your own project.</p>
     {% else %}
         {% url acct_signup as signup_url %}
         {% url acct_login as login_url %}
@@ -41,7 +42,16 @@
         </p>
         <dl>
         {% for project in projects %}
-            {% show_project project %}
+			<dt>{{ project.name }} (<a href="{% groupurl project_detail group project_slug=project.slug variant projects %}">{{ project.slug }}</a>)</dt>
+			<dd>{{ project.description }}
+				<div class="stats">
+					{% trans "Members:" %} <b>{{ project.member_count }}</b>
+					<br />
+					{% trans "Topics:" %} <b>{{ project.topic_count }}</b>
+					<br />
+					{% show_tags_for project %} {# @@@ #}
+				</div>
+			</dd>
         {% endfor %}
         </dl>
         {% paginate %}
