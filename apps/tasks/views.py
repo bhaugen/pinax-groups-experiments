@@ -45,9 +45,14 @@ except ImproperlyConfigured:
 
 def tasks(request, group_slug=None, template_name="tasks/task_list.html", bridge=None):
     
+    #body_class = "tasks"
     if bridge:
         try:
             group = bridge.get_group(group_slug)
+            #if group.group:
+            #    body_class = group.group._meta.verbose_name
+            #else:
+            #    body_class = group._meta.verbose_name
         except ObjectDoesNotExist:
             raise Http404
     else:
@@ -99,6 +104,7 @@ def tasks(request, group_slug=None, template_name="tasks/task_list.html", bridge
         "task_filter": task_filter,
         "tasks": task_filter.qs,
         "querystring": request.GET.urlencode(),
+        #"body_class": body_class,
     }, context_instance=RequestContext(request))
 
 

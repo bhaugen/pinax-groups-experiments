@@ -1,0 +1,32 @@
+{% extends "economic_events/base.html" %}
+
+{% load i18n %}
+{% load uni_form %}
+{% load group_tags %}
+
+{% block head_title %}Add Economic Event{% endblock %}
+
+{% block body %}
+    <h1>Add Economic Event {% if group %} for {{ group }} {{ group_type }} {% endif %}</h1>
+
+    {% if is_member %}
+
+         <div class="main-form">
+            <form method="POST" action="" id="economic_event_form" class="uniForm">
+                <div class="form_block">
+                    {{ economic_event_form.media }}
+                    {{ economic_event_form|as_uni_form }}
+                    <input type="submit" value="{% trans 'Add economic event' %}"/>
+                    <input type="submit" name="add-another-economic_event" value="{% trans 'Add economic event and add another' %}"/>
+                </div>
+            </form>
+        </div>
+
+
+    {% else %}
+        <p>{% trans 'You are not a member and so cannot add a economic event.' %}</p>
+    {% endif %}
+
+{% endblock %}
+
+

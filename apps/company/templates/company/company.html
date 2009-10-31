@@ -113,6 +113,10 @@
             {% groupurl economic_resource_list company as economic_resources_url %}
             <p>More here soon but, in the meantime, here's a link to the <a href="{{ economic_resources_url }}">economic_resource list</a>.</p>
 
+            <h2>{% trans "Economic Events" %}</h2>
+            
+            {% groupurl economic_event_list company as economic_events_url %}
+            <p>More here soon but, in the meantime, here's a link to the <a href="{{ economic_events_url }}">economic_event list</a>.</p>
 
 
             <h2>{% trans "Discussion Topics" %}{% if company.topics.all.count %} ({{ company.topics.all.count }}){% endif %}</h2>

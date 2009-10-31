@@ -40,7 +40,7 @@ class Project(Group):
         else:
             return False
     
-    def get_url_kwargs(self):
+    def get_url_kwargs(self, variant=None):
         return {'group_slug': self.slug}
 
 

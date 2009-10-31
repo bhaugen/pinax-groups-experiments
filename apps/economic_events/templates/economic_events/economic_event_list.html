@@ -1,0 +1,29 @@
+{% extends "economic_events/base.html" %}
+
+{% load i18n %}
+{% load shorttimesince_tag %}
+{% load order_by %}
+{% load humanize %}
+#{% load economic_resource_tags %}
+{% load tagging_tags %}
+{% load group_tags %}
+
+{% block head_title %}Economic Events{% endblock %}
+
+{% block body %}
+
+    <h1>Economic Events for {{ group }} {{ group.type_name }}</h1>
+    
+	<h3>Given:</h3>
+    {% for economic_event in give_events %}
+		<p>{{ economic_event }}</p>
+
+	{% endfor %}
+
+	<h3>Taken:</h3>
+    {% for economic_event in take_events %}
+		<p>{{ economic_event }}</p>
+
+	{% endfor %}
+    
+{% endblock %}

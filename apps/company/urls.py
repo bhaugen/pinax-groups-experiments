@@ -18,5 +18,6 @@ urlpatterns = patterns('company.views',
 
 urlpatterns += bridge.include_urls('topics.urls', r'^company/(?P<group_slug>[-\w]+)/topics/')
 urlpatterns += bridge.include_urls('economic_resources.urls', r'^company/(?P<group_slug>[-\w]+)/resources/')
+urlpatterns += bridge.include_urls('economic_events.urls', r'^company/(?P<group_slug>[-\w]+)/events/')
 urlpatterns += bridge.include_urls('wiki.urls', r'^company/(?P<group_slug>[-\w]+)/wiki/')
 urlpatterns += bridge.include_urls('projects.urls', r'^company/(?P<parent_slug>[-\w]+)/projects/')

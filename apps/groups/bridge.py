@@ -56,7 +56,7 @@ class ContentBridge(object):
 
         return patterns("", *final_urls)
     
-    def reverse(self, view_name, group, variant, kwargs=None):
+    def reverse(self, view_name, group, variant=None, kwargs=None):
         if kwargs is None:
             kwargs = {}
         

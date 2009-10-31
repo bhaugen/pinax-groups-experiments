@@ -170,6 +170,7 @@ INSTALLED_APPS = (
 
     'company',
     'economic_resources',
+    'economic_events',
 
     'about',
 

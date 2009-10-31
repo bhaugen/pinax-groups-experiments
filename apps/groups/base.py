@@ -45,7 +45,7 @@ class Group(models.Model):
     def type_name(self):
         return self._meta.verbose_name.title()
     
-    def get_url_kwargs(self):
+    def get_url_kwargs(self, variant=None):
         return {'group_slug': self.slug}
     
     def member_queryset(self):

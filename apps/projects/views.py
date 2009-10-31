@@ -35,10 +35,12 @@ WHERE projects_projectmember.project_id = projects_project.id
 def create(request, form_class=ProjectForm, template_name="projects/create.html", parent_slug=None, bridge=None):
 
     group_type = ""
+    body_class = "projects"
     if bridge:
         try:
             group = bridge.get_group(parent_slug)
             group_type = group._meta.verbose_name.title()
+            body_class = group._meta.verbose_name
         except ObjectDoesNotExist:
             raise Http404
     else:
@@ -90,20 +92,25 @@ def create(request, form_class=ProjectForm, template_name="projects/create.html"
         "group_type": group_type,
         "is_member": is_member,
         "parent_base": parent_base,
+        "body_class": body_class,
     }, context_instance=RequestContext(request))
 
 
 def projects(request, template_name="projects/projects.html", parent_slug=None, bridge=None):
 
     group_type = ""
+    body_class = "projects"
     if bridge:
         try:
             group = bridge.get_group(parent_slug)
             group_type = group._meta.verbose_name.title()
+            body_class = group._meta.verbose_name
         except ObjectDoesNotExist:
             raise Http404
     else:
         group = None
+
+    print "body_class:", body_class
     
     if not request.user.is_authenticated():
         is_member = False
@@ -141,6 +148,7 @@ def projects(request, template_name="projects/projects.html", parent_slug=None, 
         "parent_base": parent_base,
         'projects': projects,
         'search_terms': search_terms,
+        "body_class": body_class,
     }, context_instance=RequestContext(request))
 
 
@@ -181,10 +189,12 @@ def project(request, project_slug=None, form_class=ProjectUpdateForm, adduser_fo
     project = get_object_or_404(Project, slug=project_slug)
 
     group_type = ""
+    body_class = "projects"
     if bridge:
         try:
             group = bridge.get_group(parent_slug)
             group_type = group._meta.verbose_name.title()
+            body_class = group._meta.verbose_name
         except ObjectDoesNotExist:
             raise Http404
     else:
@@ -223,4 +233,5 @@ def project(request, project_slug=None, form_class=ProjectUpdateForm, adduser_fo
         "is_member": is_member,
         "group_type": group_type,
         "parent_base": parent_base,
+        "body_class": body_class,
     }, context_instance=RequestContext(request))

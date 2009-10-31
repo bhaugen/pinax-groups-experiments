@@ -1,0 +1,17 @@
+{% extends group_base|default:"site_base.html" %}
+
+{% load i18n %}
+{% load group_tags %}
+
+{% block body_class %}economic_events{% endblock %}
+
+{% block subnav %}
+    {% if user.is_authenticated %}
+        <ul>
+            <li><a href="{% groupurl economic_event_give group %}">{% trans "Give Economic Resources" %}</a></li>
+            <li><a href="{% groupurl economic_event_list group %}">{% trans "All Economic Events" %}</a></li>
+        </ul>
+    {% else %}
+        &nbsp;
+    {% endif %}
+{% endblock %}
