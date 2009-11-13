@@ -57,11 +57,9 @@ def tasks(request, group_slug=None, parent_slug=None, template_name="tasks/task_
                 try:
                     parent_base = parent.content_bridge.group_base_template("parent_base.html")
                     body_class = parent.content_bridge.content_app_name
-                    print "got content_bridge for", parent
                 except:
                     parent_base = parent.group_base_template("parent_base.html")
                     body_class = parent._meta.verbose_name
-                    print "NO content_bridge for", parent
         except ObjectDoesNotExist:
             raise Http404
     else:
@@ -130,11 +128,9 @@ def add_task(request, group_slug=None, parent_slug=None, secret_id=None, form_cl
                 try:
                     parent_base = parent.content_bridge.group_base_template("parent_base.html")
                     body_class = parent.content_bridge.content_app_name
-                    print "got content_bridge for", parent
                 except:
                     parent_base = parent.group_base_template("parent_base.html")
                     body_class = parent._meta.verbose_name
-                    print "NO content_bridge for", parent
         except ObjectDoesNotExist:
             raise Http404
     else:
@@ -212,7 +208,7 @@ def add_task(request, group_slug=None, parent_slug=None, secret_id=None, form_cl
     }, context_instance=RequestContext(request))
 
 @login_required
-def nudge(request, id, group_slug=None, bridge=None):
+def nudge(request, id, group_slug=None, parent_slug=None, bridge=None):
     """ Called when a user nudges a ticket """
     
     if bridge:
@@ -257,7 +253,7 @@ def nudge(request, id, group_slug=None, bridge=None):
     
     return HttpResponseRedirect(task_url)
 
-def task(request, id, group_slug=None, template_name="tasks/task.html", bridge=None):
+def task(request, id, group_slug=None, parent_slug=None, template_name="tasks/task.html", bridge=None):
 
     body_class = "tasks"    
     if bridge:
@@ -349,11 +345,23 @@ def task(request, id, group_slug=None, template_name="tasks/task.html", bridge=N
 
 
 @login_required
-def user_tasks(request, username, group_slug=None, template_name="tasks/user_tasks.html", bridge=None):
+def user_tasks(request, username, group_slug=None, parent_slug=None, template_name="tasks/user_tasks.html", bridge=None):
     
+    body_class = "tasks"
+    parent = None
+    parent_base = None
     if bridge:
         try:
             group = bridge.get_group(group_slug)
+            body_class = bridge.content_app_name
+            if group.group:
+                parent = group.group
+                try:
+                    parent_base = parent.content_bridge.group_base_template("parent_base.html")
+                    body_class = parent.content_bridge.content_app_name
+                except:
+                    parent_base = parent.group_base_template("parent_base.html")
+                    body_class = parent._meta.verbose_name
         except ObjectDoesNotExist:
             raise Http404
     else:
@@ -433,11 +441,14 @@ resizable=yes, status=no, toolbar=no, menuBar=no');})()""" % url
         "other_user": other_user,
         "bookmarklet": bookmarklet,
         "group_base": group_base,
+        "body_class": body_class,
+        "parent": parent,
+        "parent_base": parent_base,
     }, context_instance=RequestContext(request))
 
 
 @login_required
-def mini_list(request, group_slug=None, template_name="tasks/mini_list.html", bridge=None):
+def mini_list(request, group_slug=None, parent_slug=None, template_name="tasks/mini_list.html", bridge=None):
     if bridge:
         try:
             group = bridge.get_group(group_slug)
@@ -459,7 +470,7 @@ def mini_list(request, group_slug=None, template_name="tasks/mini_list.html", br
     }, context_instance=RequestContext(request))
 
 
-def focus(request, field, value, group_slug=None, template_name="tasks/focus.html", bridge=None):
+def focus(request, field, value, group_slug=None, parent_slug=None, template_name="tasks/focus.html", bridge=None):
     
     if bridge:
         try:
@@ -556,11 +567,23 @@ def focus(request, field, value, group_slug=None, template_name="tasks/focus.htm
     }, context_instance=RequestContext(request))
 
 
-def tasks_history_list(request, group_slug=None, template_name="tasks/tasks_history_list.html", bridge=None):
+def tasks_history_list(request, group_slug=None, parent_slug=None, template_name="tasks/tasks_history_list.html", bridge=None):
     
+    body_class = "tasks"
+    parent = None
+    parent_base = None
     if bridge:
         try:
             group = bridge.get_group(group_slug)
+            body_class = bridge.content_app_name
+            if group.group:
+                parent = group.group
+                try:
+                    parent_base = parent.content_bridge.group_base_template("parent_base.html")
+                    body_class = parent.content_bridge.content_app_name
+                except:
+                    parent_base = parent.group_base_template("parent_base.html")
+                    body_class = parent._meta.verbose_name
         except ObjectDoesNotExist:
             raise Http404
     else:
@@ -587,10 +610,13 @@ def tasks_history_list(request, group_slug=None, template_name="tasks/tasks_hist
         "task_history": tasks,
         "is_member": is_member,
         "group_base": group_base,
+        "body_class": body_class,
+        "parent": parent,
+        "parent_base": parent_base,
     }, context_instance=RequestContext(request))
 
 
-def tasks_history(request, id, group_slug=None, template_name="tasks/task_history.html", bridge=None):
+def tasks_history(request, id, group_slug=None, parent_slug=None, template_name="tasks/task_history.html", bridge=None):
     
     if bridge:
         try:

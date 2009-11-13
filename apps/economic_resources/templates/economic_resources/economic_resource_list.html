@@ -10,6 +10,8 @@
 
 {% block head_title %}Economic Resources{% endblock %}
 
+{% block body_class %}{{ block.super }} economic_resources_list{% endblock %}
+
 {% block body %}
 
     <h1>Economic Resources for {{ group }} {{ group.type_name }}</h1>

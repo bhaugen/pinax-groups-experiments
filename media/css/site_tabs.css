@@ -23,3 +23,24 @@ body.company #tab_company
     border-top: 1px solid #000; /* tab border */
     border-right: 1px solid #000; /* tab border */
 }
+
+body.companies #companies a,
+body.your_companies #your_companies a,
+body.create_company #create_company a,
+body.economic_resources_list #economic_resources_list a,
+body.add_economic_resource #add_economic_resource a,
+body.economic_event_list #economic_event_list a,
+body.add_economic_event #add_economic_event a,
+body.project_list #project_list a,
+body.your_projects #your_projects a,
+body.create_project #create_project a,
+body.add_task #add_task a,
+body.user_tasks #user_tasks a,
+body.tasks_history_list #tasks_history_list a,
+body.task_list #task_list a
+{
+    color: #FFFFFF; /* selected tab text colour */
+    background-color: #999999; /* selected tab colour */
+}
+
+

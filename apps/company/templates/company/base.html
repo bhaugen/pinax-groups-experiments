@@ -10,10 +10,11 @@
 
 {% block subnav %}
     <ul>
+        <li id="companies" ><a href="{% url company_list %}">{% trans "All Companies" %}</a></li>
         {% if user.is_authenticated %}
-            <li><a href="{% url your_companies %} ">{% trans "Your Companies" %}</a></li>
-            <li><a href="{% url company_create %}">{% trans "Create a Company" %}</a></li>
+            <li id="your_companies" ><a href="{% url your_companies %} ">{% trans "Your Companies" %}</a></li>
+            <li id="create_company" ><a href="{% url company_create %}">{% trans "Create a Company" %}</a></li>
         {% endif %}
-        <li><a href="{% url company_list %}">{% trans "All Companies" %}</a></li>
+
     </ul>
 {% endblock %}

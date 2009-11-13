@@ -14,6 +14,8 @@
 
 {% block head_title %}{{ project.name }} {% if project.group %} for {{ project.group }} {{ project.group.type_name }} {% endif %} {% endblock %}
 
+{% block body_class %}{{ block.super }} project{% endblock %}
+
 {% block body %}
     
     {% if user.is_authenticated %}

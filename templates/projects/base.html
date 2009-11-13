@@ -15,10 +15,16 @@
 
 {% block subnav %}
     <ul>
+        <li id="project_list" ><a href="
+			{% if parent %}
+				{% groupurl project_list parent variant projects %}
+			{% else %}
+				{% url project_list %}
+			{% endif %}
+			">{% trans "All Projects" %}</a></li>
         {% if user.is_authenticated %}
-            <li><a href="{% groupurl your_projects parent variant projects  %} ">{% trans "Your Projects" %}</a></li>
-            <li><a href="{% groupurl project_create parent variant projects %}">{% trans "Create a Project" %}</a></li>
+            <li id="your_projects" ><a href="{% groupurl your_projects parent variant projects  %} ">{% trans "Your Projects" %}</a></li>
+            <li id="create_project" ><a href="{% groupurl project_create parent variant projects %}">{% trans "Create a Project" %}</a></li>
         {% endif %}
-        <li><a href="{% url project_list %}">{% trans "All Projects" %}</a></li>
     </ul>
 {% endblock %}

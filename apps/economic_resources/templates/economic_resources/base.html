@@ -3,13 +3,13 @@
 {% load i18n %}
 {% load group_tags %}
 
-{% block body_class %}economic_resources{% endblock %}
+{% block body_class %}{{ block.super }} economic_resources{% endblock %}
 
 {% block subnav %}
     {% if user.is_authenticated %}
         <ul>
-            <li><a href="{% groupurl economic_resource_add group %}">{% trans "Add Economic Resource" %}</a></li>
-            <li><a href="{% groupurl economic_resource_list group %}">{% trans "All Economic Resources" %}</a></li>
+            <li id="economic_resources_list" ><a href="{% groupurl economic_resource_list group %}">{% trans "All Economic Resources" %}</a></li>
+            <li id="add_economic_resource" ><a href="{% groupurl economic_resource_add group %}">{% trans "Add Economic Resource" %}</a></li>
         </ul>
     {% else %}
         &nbsp;

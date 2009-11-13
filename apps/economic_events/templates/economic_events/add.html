@@ -6,8 +6,10 @@
 
 {% block head_title %}Add Economic Event{% endblock %}
 
+{% block body_class %}{{ block.super }} add_economic_event{% endblock %}
+
 {% block body %}
-    <h1>Add Economic Event {% if group %} for {{ group }} {{ group_type }} {% endif %}</h1>
+    <h1>Give Economic Resources {% if group %} of {{ group }} {{ group_type }} {% endif %}</h1>
 
     {% if is_member %}
 

@@ -11,6 +11,8 @@
 {#}{% block head_title %}Tasks for {{ project.name }}{% endblock %}#}
 {% block head_title %}Tasks{% endblock %}
 
+{% block body_class %}{{ block.super }} task_list{% endblock %}
+
 {% block body %}
 
     {#<h1>{% trans "Tasks for Project" %} <a href="@@@">{{ group.name }}</a></h1> #}

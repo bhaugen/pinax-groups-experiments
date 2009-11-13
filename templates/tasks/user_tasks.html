@@ -8,6 +8,8 @@
 
 {% block head_title %}Tasks for {{ other_user }}{% endblock %}
 
+{% block body_class %}{{ block.super }} user_tasks{% endblock %}
+
 {% block body %}
     <h1>Tasks for <a href="{% url profile_detail other_user %}">{{ other_user }}</a></h1>
     

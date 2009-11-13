@@ -12,6 +12,8 @@
 
 {% block head_title %}{% blocktrans %}Projects{% endblocktrans %}{% endblock %}
 
+{% block body_class %}{{ block.super }} project_list{% endblock %}
+
 {% block body %}
     <h1>{% trans "Projects" %} {% if parent %} for {{ parent }} {{ parent.type_name }} {% endif %}</h1>
     

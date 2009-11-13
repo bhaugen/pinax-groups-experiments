@@ -1,0 +1,15 @@
+pinax_groups_experiments: experiments with pinax/groups and the pinax/sample_group_project 
+to add a newfeature, try a variation, and improve navbars
+
+NEW FEATURE:  
+Nested groups, in this case company/projects/tasks,
+where a Company (a Group) can have Projects (other groups) which have Tasks.
+
+VARIATION:
+A content app (economic_events) where each content app instance is related
+to two different groups (companies).
+
+NAVBAR IMPROVEMENTS:
+* Project/tasks retains the Project maintab hilite
+* Likewise Company/Project/Tasks retains the Company maintab hilite
+* Subnav selections are hilit

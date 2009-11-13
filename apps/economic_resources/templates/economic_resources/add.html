@@ -6,6 +6,8 @@
 
 {% block head_title %}Add Economic Resource{% endblock %}
 
+{% block body_class %}{{ block.super }} add_economic_resource{% endblock %}
+
 {% block body %}
     <h1>Add Economic Resource {% if group %} for {{ group }} {{ group_type }} {% endif %}</h1>
 

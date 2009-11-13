@@ -13,6 +13,8 @@
 
 {% block head_title %}{% blocktrans %}Companies{% endblocktrans %}{% endblock %}
 
+{% block body_class %}{{ block.super }} companies{% endblock %}
+
 {% block body %}
     <h1>{% trans "Companies" %}</h1>
     

@@ -1,15 +1,53 @@
 {% extends "company/base.html" %}
 
+{% load i18n %}
 {% load group_tags %}
 
 {% block subnav_base %}
     <div class="clearfix" style="border-bottom: 1px solid #9BC;">
         <ul>
-            <li><a href="{% url company_detail parent.slug %}">{{ parent }}</a></li>
-			<li><a href="{% groupurl project_list parent variant projects %}">Projects</a></li>
-			<li><a href="{% groupurl economic_resource_list parent %}">Resources</a></li>
-            <li><a href="{% groupurl topic_list parent %}">Topics</a></li>
-            <li><a href="{% groupurl wiki_list parent %}">Wiki</a></li>
+            <li><a href="
+				{% if parent %}
+					{% url company_detail parent.slug %}">{{ parent }}
+				{% else %}
+					{% url company_detail group.slug %}">{{ group }}
+				{% endif %}
+				</a></li>
+			<li id="project_list" ><a href="
+				{% if parent %}
+					{% groupurl project_list parent variant projects %}
+				{% else %}
+					{% groupurl project_list group variant projects %}
+				{% endif %}
+				">Projects</a></li>
+			<li id="economic_resources_list" ><a href="
+				{% if parent %}
+					{% groupurl economic_resource_list parent %}
+				{% else %}
+					{% groupurl economic_resource_list group %}
+				{% endif %}
+				">Resources</a></li>
+			<li id="economic_event_list" ><a href="
+				{% if parent %}
+					{% groupurl economic_event_list parent %}
+				{% else %}
+					{% groupurl economic_event_list group %}
+				{% endif %}
+				">{% trans "Economic Events" %}</a></li>
+            <li><a href="
+				{% if parent %}
+					{% groupurl topic_list parent %}
+				{% else %}
+					{% groupurl topic_list group %}
+				{% endif %}
+				">Topics</a></li>
+            <li><a href="
+				{% if parent %}
+					{% groupurl wiki_list parent %}
+				{% else %}
+					{% groupurl wiki_list group %}
+				{% endif %}
+				">Wiki</a></li>
         </ul>
     </div>
     <div class="clearfix" style="background: #F0F7FF;">

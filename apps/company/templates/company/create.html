@@ -10,6 +10,8 @@
 
 {% block head_title %}{% blocktrans %}Create company{% endblocktrans %}{% endblock %}
 
+{% block body_class %}{{ block.super }} create_company{% endblock %}
+
 {% block body %}
     <h1>{% trans "Create company" %}</h1>
     
