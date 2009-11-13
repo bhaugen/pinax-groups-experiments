@@ -1,9 +1,19 @@
-pinax_groups_experiments: experiments with pinax/groups and the pinax/sample_group_project 
-to add a newfeature, try a variation, and improve navbars
+pinax-groups-experiments: 
+experiments with pinax/groups and the pinax/sample_group_project 
+to add a new feature, try a variation, and improve navbars.
+
+This project is just an experiment.  It does not pretend to be the best way
+to implement this stuff.  But it does mostly work.
+
+This is a pinax project, dependent on (and runs with) pinax 0.7 or 0.7.1.
+You must have one of those pinax bases installed in a virtualenv 
+and activated.
 
 NEW FEATURE:  
 Nested groups, in this case company/projects/tasks,
 where a Company (a Group) can have Projects (other groups) which have Tasks.
+
+These are ~not~ infinitely nested groups.  Will only work for 2 levels.
 
 VARIATION:
 A content app (economic_events) where each content app instance is related
@@ -13,3 +23,4 @@ NAVBAR IMPROVEMENTS:
 * Project/tasks retains the Project maintab hilite
 * Likewise Company/Project/Tasks retains the Company maintab hilite
 * Subnav selections are hilit
+
