@@ -30,6 +30,9 @@ class Company(Group):
         else:
             return {'group_slug': self.slug}
 
+    def group_base_template(self, template_name="content_base.html"):
+        return "%s/%s" % ("company", template_name)
+
 
 class CompanyMember(models.Model):
     company = models.ForeignKey(Company, related_name="members", verbose_name=_('company'))

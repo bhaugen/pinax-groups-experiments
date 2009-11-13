@@ -100,6 +100,15 @@
         {% endif %}
         
         {% if user.is_authenticated %}
+
+            <h2>{% trans "Tasks" %}</h2>
+
+            {% groupurl projects_task_list project.group group_slug=project.slug as tasks_url variant projects %}
+{% comment %}
+            {% groupurl task_list project as tasks_url %}
+{% endcomment %}
+            <p>More here soon but, in the meantime, here's a link to the <a href="{{ tasks_url }}">task list</a>.</p>
+
             <h2>{% trans "Discussion Topics" %}{% if project.topics.all.count %} ({{ project.topics.all.count }}){% endif %}</h2>
             
             {% get_topics_for_group project as topic_queryset %}
@@ -134,10 +143,6 @@
                 </p>
             {% endif %}
             
-            <h2>{% trans "Tasks" %}</h2>
-            
-            {% groupurl task_list project as tasks_url %}
-            <p>More here soon but, in the meantime, here's a link to the <a href="{{ tasks_url }}">task list</a>.</p>
                         
         {% endif %}
     </div>

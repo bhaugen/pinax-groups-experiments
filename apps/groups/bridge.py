@@ -18,6 +18,7 @@ class ContentBridge(object):
         self.group_model.content_bridge = self
     
     def include_urls(self, module_name, url_prefix, kwargs=None):
+
         if kwargs is None:
             kwargs = {}
         

@@ -22,11 +22,13 @@ class GroupURLNode(template.Node):
     
     def render(self, context):
         url = ""
+        #import pdb; pdb.set_trace()
         group = self.group.resolve(context)
         kwargs = {}
         for k, v in self.kwargs.items():
             kwargs[smart_str(k, "ascii")] = v.resolve(context)
-        
+
+        #import pdb; pdb.set_trace()        
         if group:
             bridge = group.content_bridge
             try:

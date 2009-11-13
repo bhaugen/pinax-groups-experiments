@@ -20,4 +20,7 @@ urlpatterns += bridge.include_urls('topics.urls', r'^company/(?P<group_slug>[-\w
 urlpatterns += bridge.include_urls('economic_resources.urls', r'^company/(?P<group_slug>[-\w]+)/resources/')
 urlpatterns += bridge.include_urls('economic_events.urls', r'^company/(?P<group_slug>[-\w]+)/events/')
 urlpatterns += bridge.include_urls('wiki.urls', r'^company/(?P<group_slug>[-\w]+)/wiki/')
+#import pdb; pdb.set_trace()
 urlpatterns += bridge.include_urls('projects.urls', r'^company/(?P<parent_slug>[-\w]+)/projects/')
+#import pdb; pdb.set_trace()
+#urlpatterns += bridge.include_urls('tasks.urls', r'^company/(?P<parent_slug>[-\w]+)/(?P<group_slug>[-\w]+)/tasks/')

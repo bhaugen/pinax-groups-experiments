@@ -10,10 +10,12 @@ from django.utils.translation import ugettext_lazy as _
 
 from django.conf import settings
 
-if "notification" in settings.INSTALLED_APPS:
-    from notification import models as notification
-else:
-    notification = None
+#if "notification" in settings.INSTALLED_APPS:
+#    from notification import models as notification
+#else:
+#    notification = None
+
+notification = None
 
 from projects.models import Project, ProjectMember
 from projects.forms import ProjectForm, ProjectUpdateForm, AddUserForm
@@ -34,19 +36,19 @@ WHERE projects_projectmember.project_id = projects_project.id
 @login_required
 def create(request, form_class=ProjectForm, template_name="projects/create.html", parent_slug=None, bridge=None):
 
-    group_type = ""
+    parent_type = ""
     body_class = "projects"
     if bridge:
         try:
-            group = bridge.get_group(parent_slug)
-            group_type = group._meta.verbose_name.title()
-            body_class = group._meta.verbose_name
+            parent = bridge.get_group(parent_slug)
+            parent_type = parent._meta.verbose_name.title()
+            body_class = parent._meta.verbose_name
         except ObjectDoesNotExist:
             raise Http404
     else:
-        group = None
+        parent = None
     #import pdb; pdb.set_trace()
-    if group:
+    if parent:
         parent_base = bridge.group_base_template()
     else:
         parent_base = None
@@ -54,32 +56,32 @@ def create(request, form_class=ProjectForm, template_name="projects/create.html"
     if not request.user.is_authenticated():
         is_member = False
     else:
-        if group:
-            is_member = group.user_is_member(request.user)
+        if parent:
+            is_member = parent.user_is_member(request.user)
         else:
             is_member = True
 
-    project_form = form_class(request.user, group, request.POST or None)
+    project_form = form_class(request.user, parent, request.POST or None)
     
     if project_form.is_valid():
         #import pdb; pdb.set_trace()
         project = project_form.save(commit=False)
         project.creator = request.user
-        project.group = group
+        project.group = parent
         project.save()
         project_member = ProjectMember(project=project, user=request.user)
         project.members.add(project_member)
         project_member.save()
         if notification:
-            if group:
-                notify_list = group.member_queryset()
+            if parent:
+                notify_list = parent.member_queryset()
             else:
                 notify_list = User.objects.all() # @@@
             notify_list = notify_list.exclude(id__exact=request.user.id)
             notification.send(notify_list, "projects_new_project",
                 {"project": project}, queue=True)
-        if group:
-            redirect_to = bridge.reverse("project_list", group, "projects")
+        if parent:
+            redirect_to = bridge.reverse("project_list", parent, "projects")
         else:
             redirect_to = reverse("project_list")
         return HttpResponseRedirect(redirect_to)
@@ -88,8 +90,8 @@ def create(request, form_class=ProjectForm, template_name="projects/create.html"
     
     return render_to_response(template_name, {
         "project_form": project_form,
-        "group": group,
-        "group_type": group_type,
+        "parent": parent,
+        "parent_type": parent_type,
         "is_member": is_member,
         "parent_base": parent_base,
         "body_class": body_class,
@@ -98,30 +100,28 @@ def create(request, form_class=ProjectForm, template_name="projects/create.html"
 
 def projects(request, template_name="projects/projects.html", parent_slug=None, bridge=None):
 
-    group_type = ""
+    parent_type = ""
     body_class = "projects"
     if bridge:
         try:
-            group = bridge.get_group(parent_slug)
-            group_type = group._meta.verbose_name.title()
-            body_class = group._meta.verbose_name
+            parent = bridge.get_group(parent_slug)
+            parent_type = parent._meta.verbose_name.title()
+            body_class = parent._meta.verbose_name
         except ObjectDoesNotExist:
             raise Http404
     else:
-        group = None
-
-    print "body_class:", body_class
-    
+        parent = None
+   
     if not request.user.is_authenticated():
         is_member = False
     else:
-        if group:
-            is_member = group.user_is_member(request.user)
+        if parent:
+            is_member = parent.user_is_member(request.user)
         else:
             is_member = True
         
-    if group:
-        projects = group.content_objects(Project)
+    if parent:
+        projects = parent.content_objects(Project)
         parent_base = bridge.group_base_template()
     else:
         projects = Project.objects.filter(object_id=None)
@@ -142,8 +142,8 @@ def projects(request, template_name="projects/projects.html", parent_slug=None, 
     ]), select_params=(content_type.id,))
     
     return render_to_response(template_name, {
-        "group": group,
-        "group_type": group_type,
+        "parent": parent,
+        "parent_type": parent_type,
         "is_member": is_member,
         "parent_base": parent_base,
         'projects': projects,
@@ -168,9 +168,29 @@ def delete(request, project_slug=None, redirect_url=None):
 
 
 @login_required
-def your_projects(request, template_name="projects/your_projects.html"):
+def your_projects(request, template_name="projects/your_projects.html", parent_slug=None, bridge=None):
 
-    projects = Project.objects.filter(member_users=request.user).order_by("name")
+    parent_type = ""
+    body_class = "projects"
+    if bridge:
+        try:
+            parent = bridge.get_group(parent_slug)
+            # todo: bad code, fix both of the next statements
+            parent_type = parent._meta.verbose_name.title()
+            body_class = parent._meta.verbose_name
+        except ObjectDoesNotExist:
+            raise Http404
+    else:
+        parent = None
+
+    if parent:
+        projects = parent.content_objects(Project)
+        parent_base = bridge.group_base_template()
+    else:
+        projects = Project.objects.filter(object_id=None)
+        parent_base = None  
+
+    projects = projects.filter(member_users=request.user).order_by("name")
 
     content_type = ContentType.objects.get_for_model(Project)
 
@@ -181,6 +201,10 @@ def your_projects(request, template_name="projects/your_projects.html"):
 
     return render_to_response(template_name, {
         "projects": projects,
+        "parent": parent,
+        "parent_type": parent_type,
+        "parent_base": parent_base,
+        "body_class": body_class,
     }, context_instance=RequestContext(request))
 
 
@@ -188,19 +212,19 @@ def project(request, project_slug=None, form_class=ProjectUpdateForm, adduser_fo
         template_name="projects/project.html", parent_slug=None, bridge=None):
     project = get_object_or_404(Project, slug=project_slug)
 
-    group_type = ""
+    parent_type = ""
     body_class = "projects"
     if bridge:
         try:
-            group = bridge.get_group(parent_slug)
-            group_type = group._meta.verbose_name.title()
-            body_class = group._meta.verbose_name
+            parent = bridge.get_group(parent_slug)
+            parent_type = parent._meta.verbose_name.title()
+            body_class = parent._meta.verbose_name
         except ObjectDoesNotExist:
             raise Http404
     else:
-        group = None
+        parent = None
 
-    if group:
+    if parent:
         parent_base = bridge.group_base_template()
     else:
         parent_base = None
@@ -212,11 +236,11 @@ def project(request, project_slug=None, form_class=ProjectUpdateForm, adduser_fo
     
     action = request.POST.get("action")
     if request.user == project.creator and action == "update":
-        project_form = form_class(request.user, group, request.POST, instance=project)
+        project_form = form_class(request.user, parent, request.POST, instance=project)
         if project_form.is_valid():
             project = project_form.save()
     else:
-        project_form = form_class(request.user, group, instance=project)
+        project_form = form_class(request.user, parent, instance=project)
     if request.user == project.creator and action == "add":
         adduser_form = adduser_form_class(request.POST, project=project)
         if adduser_form.is_valid():
@@ -229,9 +253,9 @@ def project(request, project_slug=None, form_class=ProjectUpdateForm, adduser_fo
         "project_form": project_form,
         "adduser_form": adduser_form,
         "project": project,
-        "group": group, 
+        "parent": parent, 
         "is_member": is_member,
-        "group_type": group_type,
+        "parent_type": parent_type,
         "parent_base": parent_base,
         "body_class": body_class,
     }, context_instance=RequestContext(request))

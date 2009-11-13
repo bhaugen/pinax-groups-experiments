@@ -4,8 +4,8 @@ from projects.forms import ProjectForm
 register = template.Library()
 
 @register.inclusion_tag("projects/project_item.html", takes_context=True)
-def show_project(context, project, group):
-    return {'project': project, 'group': group, 'request': context['request']}
+def show_project(context, project, parent):
+    return {'project': project, 'parent': parent, 'request': context['request']}
 
 # @@@ should move these next two as they aren't particularly project-specific
 

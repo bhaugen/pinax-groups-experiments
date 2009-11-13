@@ -2,7 +2,7 @@
 {% load extra_tagging_tags %}
 {% load group_tags %}
 
-<dt>{{ project.name }} (<a href="{% groupurl project_detail group variant projects %}">{{ project.slug }}</a>)</dt>
+<dt>{{ project.name }} (<a href="{% groupurl project_detail parent project_slug=project.slug variant projects %}">{{ project.slug }}</a>)</dt>
 <dd>{{ project.description }}
     <div class="stats">
         {% trans "Members:" %} <b>{{ project.member_count }}</b>

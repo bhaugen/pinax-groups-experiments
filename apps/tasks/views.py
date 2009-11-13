@@ -43,16 +43,25 @@ except ImproperlyConfigured:
     notification = None
 
 
-def tasks(request, group_slug=None, template_name="tasks/task_list.html", bridge=None):
+def tasks(request, group_slug=None, parent_slug=None, template_name="tasks/task_list.html", bridge=None):
     
-    #body_class = "tasks"
+    body_class = "tasks"
+    parent = None
+    parent_base = None
     if bridge:
         try:
             group = bridge.get_group(group_slug)
-            #if group.group:
-            #    body_class = group.group._meta.verbose_name
-            #else:
-            #    body_class = group._meta.verbose_name
+            body_class = bridge.content_app_name
+            if group.group:
+                parent = group.group
+                try:
+                    parent_base = parent.content_bridge.group_base_template("parent_base.html")
+                    body_class = parent.content_bridge.content_app_name
+                    print "got content_bridge for", parent
+                except:
+                    parent_base = parent.group_base_template("parent_base.html")
+                    body_class = parent._meta.verbose_name
+                    print "NO content_bridge for", parent
         except ObjectDoesNotExist:
             raise Http404
     else:
@@ -74,10 +83,7 @@ def tasks(request, group_slug=None, template_name="tasks/task_list.html", bridge
     else:
         tasks = Task.objects.filter(object_id=None)
         group_base = None
-
-    print "group:", group
-    print "group_base:", group_base
-    
+   
     tasks = tasks.select_related("assignee")
     
     # default filtering
@@ -104,15 +110,31 @@ def tasks(request, group_slug=None, template_name="tasks/task_list.html", bridge
         "task_filter": task_filter,
         "tasks": task_filter.qs,
         "querystring": request.GET.urlencode(),
-        #"body_class": body_class,
+        "body_class": body_class,
+        "parent": parent,
+        "parent_base": parent_base,
     }, context_instance=RequestContext(request))
 
 
-def add_task(request, group_slug=None, secret_id=None, form_class=TaskForm, template_name="tasks/add.html", bridge=None):
+def add_task(request, group_slug=None, parent_slug=None, secret_id=None, form_class=TaskForm, template_name="tasks/add.html", bridge=None):
     
+    body_class = "tasks"
+    parent = None
+    parent_base = None
     if bridge:
         try:
             group = bridge.get_group(group_slug)
+            body_class = bridge.content_app_name
+            if group.group:
+                parent = group.group
+                try:
+                    parent_base = parent.content_bridge.group_base_template("parent_base.html")
+                    body_class = parent.content_bridge.content_app_name
+                    print "got content_bridge for", parent
+                except:
+                    parent_base = parent.group_base_template("parent_base.html")
+                    body_class = parent._meta.verbose_name
+                    print "NO content_bridge for", parent
         except ObjectDoesNotExist:
             raise Http404
     else:
@@ -184,6 +206,9 @@ def add_task(request, group_slug=None, secret_id=None, form_class=TaskForm, temp
         "is_member": is_member,
         "task_form": task_form,
         "group_base": group_base,
+        "body_class": body_class,
+        "parent": parent,
+        "parent_base": parent_base,
     }, context_instance=RequestContext(request))
 
 @login_required
@@ -233,10 +258,12 @@ def nudge(request, id, group_slug=None, bridge=None):
     return HttpResponseRedirect(task_url)
 
 def task(request, id, group_slug=None, template_name="tasks/task.html", bridge=None):
-    
+
+    body_class = "tasks"    
     if bridge:
         try:
             group = bridge.get_group(group_slug)
+            body_class = 'projects'
         except ObjectDoesNotExist:
             raise Http404
     else:
@@ -317,6 +344,7 @@ def task(request, id, group_slug=None, template_name="tasks/task.html", bridge=N
         "is_member": is_member,
         "form": form,
         "group_base": group_base,
+        "body_class": body_class,
     }, context_instance=RequestContext(request))
 
 

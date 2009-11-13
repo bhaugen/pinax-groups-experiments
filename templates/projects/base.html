@@ -16,8 +16,8 @@
 {% block subnav %}
     <ul>
         {% if user.is_authenticated %}
-            <li><a href="{% url your_projects %} ">{% trans "Your Projects" %}</a></li>
-            <li><a href="{% groupurl project_create group variant projects %}">{% trans "Create a Project" %}</a></li>
+            <li><a href="{% groupurl your_projects parent variant projects  %} ">{% trans "Your Projects" %}</a></li>
+            <li><a href="{% groupurl project_create parent variant projects %}">{% trans "Create a Project" %}</a></li>
         {% endif %}
         <li><a href="{% url project_list %}">{% trans "All Projects" %}</a></li>
     </ul>
